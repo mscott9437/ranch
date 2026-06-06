@@ -70,3 +70,9 @@ Testing/
 
 # nixos
 flake.lock
+
+# zig
+.zig-cache/
+
+# binary
+ranch

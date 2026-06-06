@@ -17,6 +17,9 @@
           packages = with pkgs; [
             # Toolchain
             zig
+            clang
+            llvm
+            lldb
             pkg-config
             gdb
 
@@ -27,26 +30,24 @@
             protobuf
             wasmtime
 
-            # Useful Vulkan/SPIR-V tooling
+            # Shader tooling
             shaderc
             spirv-tools
             spirv-headers
           ];
 
           buildInputs = with pkgs; [
-            # Vulkan SDK components
+            # Vulkan
             vulkan-loader
             vulkan-headers
             vulkan-validation-layers
 
-            # OpenGL implementation
+            # Graphics
             mesa
-
-            # Graphics helpers
             glfw
             glm
 
-            # Text rendering
+            # Text
             freetype
 
             # Database
@@ -60,52 +61,22 @@
           ];
 
           shellHook = ''
+            export CC=clang
+            export CXX=clang++
             export VK_LAYER_PATH="${pkgs.vulkan-validation-layers}/share/vulkan/explicit_layer.d"
 
             echo ""
-            echo "=== Zig Vulkan Development Shell ==="
+            echo "=== Zig + Clang Vulkan Development Shell ==="
             echo "Zig: $(zig version)"
+            echo "Clang: $(clang --version | head -n1)"
             echo ""
 
-            echo "Libraries:"
-            echo "  Vulkan"
-            echo "  GLFW"
-            echo "  GLM"
-            echo "  FreeType"
-            echo "  SQLite"
-            echo "  cURL"
-            echo "  zlib"
-            echo "  Protobuf"
-            echo "  Wasmtime"
+            echo "C++ (clang):"
+            echo '  clang++ src/main.cpp src/glad.cpp -std=c++23 -Iinclude $(pkg-config --cflags --libs glfw3 freetype2 vulkan sqlite3 libcurl zlib) -o ranch'
             echo ""
 
-            echo "Zig:"
-            echo "  zig build"
-            echo "  zig build run"
-            echo "  zig build -Doptimize=ReleaseFast"
-            echo ""
-
-            echo "C++:"
-            echo '  zig c++ src/main.cpp -std=c++23 $(pkg-config --cflags --libs glfw3 freetype2 vulkan sqlite3 libcurl zlib) -o app'
-            echo ""
-
-            echo "WebAssembly:"
-            echo "  zig build -Dtarget=wasm32-wasi"
-            echo "  zig build -Dtarget=wasm32-freestanding"
-            echo ""
-
-            echo "Protobuf:"
-            echo "  protoc --cpp_out=. schema.proto"
-            echo ""
-
-            echo "Wasmtime:"
-            echo "  wasmtime module.wasm"
-            echo ""
-
-            vulkaninfo --summary >/dev/null 2>&1 \
-              && echo "✓ Vulkan runtime detected" \
-              || echo "✗ Vulkan runtime not currently available"
-
+            echo "C++ (zig):"
+            echo '  zig c++ src/main.cpp src/glad.cpp -std=c++23 -Iinclude $(pkg-config --cflags --libs glfw3 freetype2 vulkan sqlite3 libcurl zlib) -o ranch'
             echo ""
           '';
         };
