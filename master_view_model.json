@@ -1,0 +1,62 @@
+{
+  "view": "master",
+
+  "sections": [
+
+    {
+      "id": "mission",
+
+      "title": "Mission",
+
+      "type": "table",
+
+      "priority": 1,
+
+      "columns": [
+        "Metric",
+        "Value"
+      ],
+
+      "rows": [
+
+        {
+          "Metric": "Health",
+          "Value": "91.5%"
+        },
+
+        {
+          "Metric": "Continuity",
+          "Value": "PRESERVED"
+        }
+      ]
+    },
+
+    {
+      "id": "network",
+
+      "title": "Network",
+
+      "type": "table",
+
+      "priority": 2,
+
+      "columns": [
+        "Metric",
+        "Value"
+      ],
+
+      "rows": [
+
+        {
+          "Metric": "Latency",
+          "Value": "184 ms"
+        },
+
+        {
+          "Metric": "Throughput",
+          "Value": "14.2 Gbps"
+        }
+      ]
+    }
+  ]
+}
