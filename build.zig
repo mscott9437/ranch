@@ -1,43 +1,24 @@
 const std = @import("std");
 
 pub fn build(b: *std.Build) void {
-    const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    const exe = b.addExecutable(.{
-        .name = "app",
+    const wasm_mod = b.createModule(.{
         .root_source_file = b.path("src/main.zig"),
-        .target = target,
+        .target = b.resolveTargetQuery(.{
+            .cpu_arch = .wasm32,
+            .os_tag = .freestanding,
+        }),
         .optimize = optimize,
     });
 
-    // Graphics
-    exe.linkSystemLibrary("vulkan");
-    exe.linkSystemLibrary("glfw");
+    const wasm = b.addExecutable(.{
+        .name = "app",
+        .root_module = wasm_mod,
+    });
 
-    // Text rendering
-    exe.linkSystemLibrary("freetype");
+    wasm.entry = .disabled;
+    wasm.rdynamic = true;
 
-    // Database
-    exe.linkSystemLibrary("sqlite3");
-
-    // Networking
-    exe.linkSystemLibrary("curl");
-
-    // Compression
-    exe.linkSystemLibrary("z");
-
-    // Optional if you start using C imports:
-    exe.linkLibC();
-
-    b.installArtifact(exe);
-
-    const run_cmd = b.addRunArtifact(exe);
-
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
-
-    const run_step = b.step("run", "Run the application");
-    run_step.dependOn(&run_cmd.step);
+    b.installArtifact(wasm);
 }

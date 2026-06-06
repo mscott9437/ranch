@@ -73,6 +73,7 @@ flake.lock
 
 # zig
 .zig-cache/
+zig-out/
 
 # binary
 ranch
